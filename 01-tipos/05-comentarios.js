@@ -1,4 +1,9 @@
 // this is a comment
+/*
+Todo lo que escibamos entremedio
+de los slash y los arteriscos
+va a ser ignorado
+*/
 /**
  * Este es un comentario
  * de muchas
