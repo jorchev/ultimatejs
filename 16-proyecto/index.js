@@ -2,6 +2,7 @@ class User {
     static #url = 'https://jsonplaceholder.typicode.com/users';
     static #users = [];
     static #ul = document.createElement('ul');
+    static #form = document.createElement('form');
 
     static async getAll() {
         try {
@@ -27,13 +28,27 @@ class User {
         return this.#ul;
     }
 
+    static onSubmit(e) {
+        e.preventDefault();
+    }
+
+    static renderForm() {
+        // onSubmit, initialValues, error, html
+        this.#form.onsubmit = this.onSubmit;
+        this.#form.innerHTML = '';
+
+        return this.#form;
+    }
+
 }
 
 
 async function main() {
     const users = await User.getAll();
     const template = User.render();
-    console.log(template);
+    const form = User.renderForm();
+    document.body.insertAdjacentElement('afterbegin', template);
+    document.body.insertAdjacentElement('afterbegin', form);
 }
 
 main();
