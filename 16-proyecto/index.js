@@ -27,7 +27,7 @@ class User {
             this.#users = await response.json();
             return this.#users;
         } catch (error) {
-            console.log('Error', e);
+            console.log('Error', error);
         }
     }
 
@@ -53,19 +53,35 @@ class User {
             this.#form.innerHTML = this.formHTML({ data, errors });
             return;
         }
+        user.save();
+    }
+
+    save() {
+        return User.save(this);
+    }
+
+    static async save(user) {
+        try {
+            const response = await fetch(this.#url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', },
+                body: JSON.stringify(user),
+            });
+            const data = await response.json();
+            this.#users.unshift(data);
+            this.#ul.prepend(this.renderUser(data));
+        } catch (error) {
+            console.log('Error', error);
+        }
     }
 
     validate() {
         let errors = {};
         if (!this.name) {
             errors.name = "Nombre es obligatorio";
-        } else {
-            errors.name = '';
         }
         if (!this.email) {
             errors.email = "Correo es obligatorio";
-        } else {
-            errors.email = '';
         }
 
         return errors;
