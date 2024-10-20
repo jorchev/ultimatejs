@@ -1,3 +1,10 @@
+let serialize = target => 
+    Array.from(target.elements).reduce((acc, el) => {
+        if (!el.name) return acc;
+        acc[el.name] = el.value;
+        return acc;
+    }, {});
+
 class User {
     static #url = 'https://jsonplaceholder.typicode.com/users';
     static #users = [];
@@ -6,6 +13,11 @@ class User {
     static #initialValues = {
         name: '',
         email: '',
+    }
+
+    constructor(data) {
+        this.name = data.name;
+        this.email = data.email;
     }
 
     static async getAll() {
@@ -34,6 +46,29 @@ class User {
 
     static onSubmit(e) {
         e.preventDefault();
+        let data = serialize(e.target);
+        let user = new User(data);
+        const errors = user.validate();
+        if (Object.keys(errors).length > 0) {
+            this.#form.innerHTML = this.formHTML({ data, errors });
+            return;
+        }
+    }
+
+    validate() {
+        let errors = {};
+        if (!this.name) {
+            errors.name = "Nombre es obligatorio";
+        } else {
+            errors.name = '';
+        }
+        if (!this.email) {
+            errors.email = "Correo es obligatorio";
+        } else {
+            errors.email = '';
+        }
+
+        return errors;
     }
 
     static formHTML({ data, errors }){
@@ -56,7 +91,7 @@ class User {
 
     static renderForm() {
         // onSubmit, initialValues, error, html
-        this.#form.onsubmit = this.onSubmit;
+        this.#form.onsubmit = this.onSubmit.bind(this);
         this.#form.innerHTML = this.formHTML({ 
             data: this.#initialValues, 
             errors: '' 
